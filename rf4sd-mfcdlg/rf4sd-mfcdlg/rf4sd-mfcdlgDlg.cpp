@@ -84,6 +84,14 @@ CString Crf4sdmfcdlgDlg::GetExePath()
 	return m_FilePath;
 }
 
+CString Crf4sdmfcdlgDlg::GetFilePath(CString filename)
+{
+	int m_iPosIndex;
+	m_iPosIndex = filename.ReverseFind('/');
+	filename = filename.Left(m_iPosIndex);
+	return filename;
+}
+
 BOOL Crf4sdmfcdlgDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -116,7 +124,7 @@ BOOL Crf4sdmfcdlgDlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 	//RecoverFileName4SkyDrive();
 	m_filePath = GetExePath();
-	m_filePath += '\\';
+	m_filePath += '/';
 	UpdateData( FALSE );
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -224,6 +232,8 @@ void Crf4sdmfcdlgDlg::RecoverFileName4SkyDrive()
 		m_fileNameList.AddString( pNameListSplit[i] );
 	}
 
+	CString oldFileDirectoryPre = GetFilePath( folderPath + pNameListSplit[2] );;
+
 	for ( int i=0;i<nNameCount; i+=3 )
 	{
 		if( pNameListSplit[i].IsEmpty() )
@@ -235,12 +245,31 @@ void Crf4sdmfcdlgDlg::RecoverFileName4SkyDrive()
 
 		if ( newFileName.GetAt(0) != ' ' && oldFileName.GetAt(0) != ' ' )
 		{
+			CString newFileDirectory = GetFilePath(newFileName);
+			//   判断路径是否存在   
+			if(!PathIsDirectory( newFileDirectory )   ) 
+			{
+				if(!CreateDirectory( newFileDirectory,   NULL   )   )   
+				{
+					AfxMessageBox("目录创建失败！");
+					continue;
+				}
+			}
+
 			BOOL bResult = MoveFileEx( oldFileName, newFileName, MOVEFILE_COPY_ALLOWED );
 			if (bResult==0)
 			{
 				int nError = GetLastError();
 				bResult = nError ;
 			}
+
+			CString oldFileDirectory = GetFilePath( oldFileName );
+			if ( oldFileDirectoryPre != oldFileDirectory )
+			{
+				RemoveDirectory( oldFileDirectoryPre );
+				oldFileDirectoryPre = oldFileDirectory;
+			}
+
 		}
 	}
 
@@ -316,7 +345,7 @@ void Crf4sdmfcdlgDlg::OnBnClickedChooseFilePath()
 	if(!SHGetPathFromIDList(pIdlst, szPath)) return;
 
 	m_filePath = szPath;
-	m_filePath += '\\';
+	m_filePath += '/';
 	UpdateData( FALSE );
 }
 
@@ -325,7 +354,7 @@ void Crf4sdmfcdlgDlg::OnBnClickedRecoverFileName()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	UpdateData( TRUE );
-	m_filePath += '\\';
+	m_filePath += '/';
 
 	RecoverFileName4SkyDrive();
 

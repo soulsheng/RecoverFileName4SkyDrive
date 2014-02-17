@@ -35,6 +35,7 @@ protected:
 	CString * SplitString(CString str, char split, int& iSubStrs);
 	void Convert(const char* strIn,char* strOut, int sourceCodepage, int targetCodepage) ;
 	CString GetExePath();
+	CString GetFilePath(CString filename);
 
 public:
 	// 文件名列表
