@@ -324,6 +324,9 @@ void Crf4sdmfcdlgDlg::OnBnClickedChooseFilePath()
 void Crf4sdmfcdlgDlg::OnBnClickedRecoverFileName()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	UpdateData( TRUE );
+	m_filePath += '\\';
+
 	RecoverFileName4SkyDrive();
 
 }
