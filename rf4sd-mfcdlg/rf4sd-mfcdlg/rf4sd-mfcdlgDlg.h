@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "afxwin.h"
 
 
 // Crf4sdmfcdlgDlg 对话框
@@ -29,4 +30,11 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+	void RecoverFileName4SkyDrive();
+	CString * SplitString(CString str, char split, int& iSubStrs);
+	void Convert(const char* strIn,char* strOut, int sourceCodepage, int targetCodepage) ;
+public:
+	// 文件名列表
+	CListBox m_fileNameList;
 };
