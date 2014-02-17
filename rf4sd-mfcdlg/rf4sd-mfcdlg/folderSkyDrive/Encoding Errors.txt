@@ -1,0 +1,9 @@
+﻿Due to the limitations of the supported zip file format, the following file(s) had to be renamed.
+
+Original File Name  ->  New File Name
+动画-Good_Vibrations美好的振动.jpg -> File1.jpg
+微电影：爱是会传递的.jpg -> File2.jpg
+微电影《交易》.jpg -> File3.jpg
+微电影-红色头盔_480-360.jpg -> File4.jpg
+来信_王岽鉴作品.jpg -> File5.jpg
+第二届中国国际微电影闭幕式影片《生日》.jpg -> File6.jpg
