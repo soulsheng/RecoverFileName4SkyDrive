@@ -50,6 +50,7 @@ END_MESSAGE_MAP()
 
 Crf4sdmfcdlgDlg::Crf4sdmfcdlgDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(Crf4sdmfcdlgDlg::IDD, pParent)
+	, m_filePath(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -58,16 +59,30 @@ void Crf4sdmfcdlgDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, m_fileNameList);
+	DDX_Text(pDX, IDC_EDIT1, m_filePath);
 }
 
 BEGIN_MESSAGE_MAP(Crf4sdmfcdlgDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &Crf4sdmfcdlgDlg::OnBnClickedChooseFilePath)
+	ON_BN_CLICKED(IDC_BUTTON2, &Crf4sdmfcdlgDlg::OnBnClickedRecoverFileName)
 END_MESSAGE_MAP()
 
 
 // Crf4sdmfcdlgDlg 消息处理程序
+//获取应用程序所在路径
+CString Crf4sdmfcdlgDlg::GetExePath()
+{
+	CString m_FilePath;
+	GetModuleFileName(NULL,m_FilePath.GetBufferSetLength(MAX_PATH+1),MAX_PATH);
+	m_FilePath.ReleaseBuffer();
+	int m_iPosIndex;
+	m_iPosIndex = m_FilePath.ReverseFind('\\');
+	m_FilePath = m_FilePath.Left(m_iPosIndex);
+	return m_FilePath;
+}
 
 BOOL Crf4sdmfcdlgDlg::OnInitDialog()
 {
@@ -99,7 +114,10 @@ BOOL Crf4sdmfcdlgDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-	RecoverFileName4SkyDrive();
+	//RecoverFileName4SkyDrive();
+	m_filePath = GetExePath();
+	m_filePath += '\\';
+	UpdateData( FALSE );
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -168,7 +186,7 @@ void Crf4sdmfcdlgDlg::Convert(const char* strIn,char* strOut, int sourceCodepage
 
 void Crf4sdmfcdlgDlg::RecoverFileName4SkyDrive()
 {
-	CString folderPath("folderSkyDrive\\"); 
+	CString folderPath( m_filePath ); 
 
 	CFile fileInput;
 	CString fileListName = folderPath + "Encoding Errors.txt" ;
@@ -229,6 +247,8 @@ void Crf4sdmfcdlgDlg::RecoverFileName4SkyDrive()
 	delete[] pNameListSplit;
 
 	fileInput.Close();
+
+	DeleteFile( fileListName );
 }
 
 void Crf4sdmfcdlgDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -280,3 +300,30 @@ HCURSOR Crf4sdmfcdlgDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void Crf4sdmfcdlgDlg::OnBnClickedChooseFilePath()
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	BROWSEINFO stInfo = {NULL};
+	LPCITEMIDLIST pIdlst;
+	TCHAR szPath[MAX_PATH];
+	stInfo.ulFlags = BIF_DONTGOBELOWDOMAIN | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+	stInfo.lpszTitle= "请选择路径:";
+	pIdlst = SHBrowseForFolder(&stInfo);
+	if(!pIdlst) return ;
+	if(!SHGetPathFromIDList(pIdlst, szPath)) return;
+
+	m_filePath = szPath;
+	m_filePath += '\\';
+	UpdateData( FALSE );
+}
+
+
+void Crf4sdmfcdlgDlg::OnBnClickedRecoverFileName()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	RecoverFileName4SkyDrive();
+
+}

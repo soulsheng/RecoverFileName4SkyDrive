@@ -34,7 +34,13 @@ protected:
 	void RecoverFileName4SkyDrive();
 	CString * SplitString(CString str, char split, int& iSubStrs);
 	void Convert(const char* strIn,char* strOut, int sourceCodepage, int targetCodepage) ;
+	CString GetExePath();
+
 public:
 	// 文件名列表
 	CListBox m_fileNameList;
+	// 文件路径
+	CString m_filePath;
+	afx_msg void OnBnClickedChooseFilePath();
+	afx_msg void OnBnClickedRecoverFileName();
 };
